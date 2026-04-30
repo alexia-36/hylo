@@ -1,3 +1,7 @@
+//CORS (Cross-Origin Resource Sharing).
+//În contextul aplicațiilor web, CORS este esențial pentru a preveni atacurile de tip cross-site scripting (XSS) și pentru a asigura că doar sursele autorizate pot accesa resursele sensibile.
+//Când încerci să faci fetch direct de pe frontend (ex: localhost:3000) către https://en.wikipedia.org, browserul blochează cererea din motive de securitate (CORS), pentru că Wikipedia nu are setate headerele CORS să permită acces de pe orice domeniu.
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
