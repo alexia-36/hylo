@@ -23,21 +23,21 @@ type Props = {
 };
 
 export default function CountryCard({ data }: Props) {
-  console.log(data);
   return (
     <div
       className="
         relative w-full max-w-md overflow-hidden rounded-3xl
         border border-[rgb(45,213,255)]
-        bg-[linear-gradient(135deg,rgba(8,18,28,0.96),rgba(12,45,58,0.92),rgba(0,0,0,0.88))]
+         bg-[linear-gradient(135deg,rgba(5,30,45,0.96),rgba(10,55,65,0.92),rgba(0,20,30,0.88))]
         p-6 text-white backdrop-blur-md
         transition-all duration-300
         hover:scale-[1.02]
+        md:h-135
       "
     >
       {/* Glow Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(42,106,122,0.18),transparent_40%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(34,98,126,0.12),transparent_45%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(17, 44, 51, 0.18),transparent_40%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(3, 8, 10, 0.12),transparent_45%)] pointer-events-none" />
 
       <div className="relative z-10">
         {/* Header */}
@@ -94,20 +94,6 @@ export default function CountryCard({ data }: Props) {
           <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
             <span className="text-cyan-100/70">Currencies</span>
             <span className="font-semibold">{data.currencies}</span>
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
-            <span className="text-cyan-100/70">Independent</span>
-            <span className="font-semibold">
-              {data.independent ? "Yes" : "No"}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
-            <span className="text-cyan-100/70">Week Starts</span>
-            <span className="font-semibold capitalize">
-              {data.startOfTheWeek}
-            </span>
           </div>
         </div>
       </div>

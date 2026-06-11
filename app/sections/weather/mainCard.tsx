@@ -5,8 +5,8 @@ import { OpenMeteoForecast } from "./ContentForecast";
 export type WeatherType = {
   name: string;
   coord: {
-    lat: number;
-    lon: number;
+    lat: number | undefined;
+    lon: number | undefined;
   };
   weather: {
     main: string;
@@ -28,7 +28,7 @@ type Props = {
   forecast: OpenMeteoForecast | null;
 };
 
-export default function CardComp({ currentWeather, forecast }: Props) {
+export default function MainCard({ currentWeather, forecast }: Props) {
   function getIcon(weatherMain?: string) {
     switch (weatherMain) {
       case "Clear":
@@ -56,7 +56,7 @@ export default function CardComp({ currentWeather, forecast }: Props) {
 
   //functie care preia care preia orele din ziua curenta din forecast si le formateaza intr-un array frumos cu ora si temp
   function getTodayHourly(forecast: OpenMeteoForecast | null) {
-    if (!forecast) return [];
+    if (!forecast?.hourly?.time) return [];
 
     const today = new Date().toISOString().split("T")[0];
     const result: { time: string; temp: number }[] = [];
@@ -78,27 +78,27 @@ export default function CardComp({ currentWeather, forecast }: Props) {
 
   //mai jos sunt comenzi ca sa se afiseze frumos Miercuri 4 aprilie 3094
   const days = [
-    "Duminică",
-    "Luni",
-    "Marți",
-    "Miercuri",
-    "Joi",
-    "Vineri",
-    "Sâmbătă",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ];
   const months = [
-    "ianuarie",
-    "februarie",
-    "martie",
-    "aprilie",
-    "mai",
-    "iunie",
-    "iulie",
-    "august",
-    "septembrie",
-    "octombrie",
-    "noiembrie",
-    "decembrie",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   const getFormattedDate = () => {
     const date = new Date(); // obține data curentă
@@ -112,8 +112,8 @@ export default function CardComp({ currentWeather, forecast }: Props) {
   const formattedDate = getFormattedDate();
 
   return (
-    <Card className="w-full max-w-sm mx-auto rounded-2xl hover:scale-[1.02] transition-all duration-300  border-2 border-[rgb(45,213,255)] bg-gradient-to-br from-[rgba(15,116,121,0.55)] via-[rgba(20,140,140,0.45)] to-[rgba(10,80,85,0.4)]">
-      {currentWeather ? (
+    <Card className="w-full h-full max-w-sm mx-auto rounded-2xl hover:scale-[1.02] transition-all duration-300  border-2 border-[rgb(45,213,255)] bg-gradient-to-br from-[rgba(15,116,121,0.55)] via-[rgba(20,140,140,0.45)] to-[rgba(10,80,85,0.4)]">
+      {currentWeather && (
         <>
           {/* HEADER */}
           <CardHeader className="pb-2">
@@ -198,10 +198,6 @@ export default function CardComp({ currentWeather, forecast }: Props) {
             )}
           </CardContent>
         </>
-      ) : (
-        <div className="text-white text-center py-10 animate-pulse">
-          Loading...
-        </div>
       )}
     </Card>
   );

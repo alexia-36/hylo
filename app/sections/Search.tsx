@@ -20,17 +20,17 @@ export default function Search({inputVal, setInputVal, setCurrentWeather, setSea
   }
 
   //asta se apeleaza o singura daca la montarea componentei, ca sa am ceva afisat inainte sa caut eu un oras
-  useEffect(() => {
-    async function getFirstWeather() {
-      const data = await getWeather("London");
-      setInputVal("London");
-      setCurrentWeather(data);
-    }
-    getFirstWeather();
-  }, [setCurrentWeather, setInputVal]);
+  // useEffect(() => {
+  //   async function getFirstWeather() {
+  //     const data = await getWeather("London");
+  //     setInputVal("London");
+  //     setCurrentWeather(data);
+  //   }
+  //   getFirstWeather();
+  // }, [setCurrentWeather, setInputVal]);
 
   return (
-    <form className="flex items-center justify-between gap-2 w-full max-w-xs sm:max-w-md mx-auto bg-white/5 backdrop-blur-md border border-[rgb(41,86,122)] rounded-xl px-3 py-2">
+    <form className="flex items-center justify-between gap-2 w-full sm:mt-[-20px] md:mt-0 max-w-xs sm:max-w-md mx-auto bg-white/5 backdrop-blur-md border border-[rgb(41,86,122)] rounded-xl px-3 py-2">
       <input
         type="text"
         placeholder="Enter a city..."

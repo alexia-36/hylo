@@ -85,13 +85,13 @@ export default function ContentForecast({ forecast }: Props) {
   // ziua saptamanii
   const getDayName = (dateString: string) => {
     const days = [
-      "Duminică",
-      "Luni",
-      "Marți",
-      "Miercuri",
-      "Joi",
-      "Vineri",
-      "Sâmbătă",
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
     ];
     const date = new Date(dateString);
     return days[date.getDay()];
@@ -100,11 +100,11 @@ export default function ContentForecast({ forecast }: Props) {
   // format data
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.toLocaleString("ro-RO", { month: "long" });
-    const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
-  };
+    return date.toLocaleString("en-US", {
+      month: "long",
+      day: "numeric",
+    });
+  }; // Output: "June 6"
 
   const compEl = nextDays.map((day) => {
     const hours = grouped[day] || [];
@@ -129,7 +129,7 @@ export default function ContentForecast({ forecast }: Props) {
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-11 gap-y-6 md:ml-3">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3  gap-y-6 md:gap-7 ">
       {compEl}
     </div>
   );
