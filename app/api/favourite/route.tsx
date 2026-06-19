@@ -74,3 +74,26 @@ export async function DELETE(req: Request) {
     );
   }
 }
+
+//PATCH - actualizeaza doar o parte din tabel, spre deosebire de post care actualizeaza tot tabelul
+export async function PATCH(req: Request) {
+  try {
+    const { id, note } = await req.json();
+
+    const favourite = await prisma.favourite.update({
+      where: {
+        id,
+      },
+      data: {
+        note,
+      },
+    });
+
+    return NextResponse.json(favourite);
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Failed to update note" },
+      { status: 500 },
+    );
+  }
+}

@@ -59,7 +59,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className=" min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-slate-950  via-slate-900 to-teal-950">
+    <div className="min-h-screen  flex items-center justify-center px-4 bg-gradient-to-br from-slate-950  via-slate-900 to-teal-950">
       <Link
         href="/"
         className=" absolute  top-5  left-5  group flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white/5 backdrop-blur-sm border border-cyan-400/20 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-cyan-500/20"
@@ -79,7 +79,7 @@ export default function LoginPage() {
         </svg>
         Back Home
       </Link>
-      <div className="w-full max-w-md p-8 rounded-3xl bg-[rgba(15,116,121,0.18)] backdrop-blur-xl border border-cyan-400/30shadow-2xl shadow-cyan-500/10">
+      <div className="w-full mt-10 mb-15 max-w-md p-8 rounded-3xl bg-[rgba(15,116,121,0.18)] backdrop-blur-xl border border-cyan-400/30shadow-2xl shadow-cyan-500/10">
         {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent">

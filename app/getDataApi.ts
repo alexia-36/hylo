@@ -13,8 +13,8 @@ export async function getWeather(city: string) {
 }
 
 //aici e pt vremea pe 7 zile
-export async function getForecast(lat: number, long: number) {
-  const res = await fetch(`/api/forecast?lat=${lat}&long=${long}`);
+export async function getForecast(lat: number, lon: number) {
+  const res = await fetch(`/api/forecast?lat=${lat}&lon=${lon}`);
   return res.json();
 }
 

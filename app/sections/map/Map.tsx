@@ -112,8 +112,8 @@ export default function Map({ cityName }: { cityName: string }) {
   return (
     <div className="relative w-full md:h-135 max-w-md overflow-hidden rounded-3xl border border-[rgb(45,213,255)] bg-[linear-gradient(135deg,rgba(5,30,45,0.96),rgba(10,55,65,0.92),rgba(0,20,30,0.88))] p-6 text-white backdrop-blur-md">
       <div className="relative z-10">
-        <div className="mb-5 border-b border-white/20 pb-4">
-          <p className="text-xl font-bold bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent">
+        <div className="flex justify-center mb-5 border-b border-white/20 pb-4">
+          <p className="text-3xl font-bold bg-linear-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent">
             Location Map
           </p>
         </div>
@@ -121,7 +121,7 @@ export default function Map({ cityName }: { cityName: string }) {
         <div className="overflow-hidden rounded-2xl border border-white/10 shadow-xl md:mt-13">
           <div className="h-64 md:h-80 w-full relative">
             {loading && (
-              <div className="absolute inset-0 z-[999] bg-black/30 flex items-center justify-center text-cyan-200">
+              <div className="absolute inset-0 z-999 bg-black/30 flex items-center justify-center text-cyan-200">
                 Loading...
               </div>
             )}
@@ -132,7 +132,7 @@ export default function Map({ cityName }: { cityName: string }) {
               scrollWheelZoom={false}
               style={{ height: "100%", width: "100%" }}
             >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}" />
 
               <Marker position={coords} icon={customIcon}>
                 <Popup>{cityName}</Popup>

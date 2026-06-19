@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 
 import { getWeather } from "../../app/getDataApi";
 import { WeatherType } from "./weather/MainCard";
@@ -9,13 +8,22 @@ type Props = {
   setInputVal: (value: string) => void;
   setCurrentWeather: (value: WeatherType | null) => void;
   setSearch: (value: string) => void; //asta e pt titlul sectiunii weather
+  setPlaceNotFound: (value: boolean) => void;
 };
 //prettier-ignore
-export default function Search({inputVal, setInputVal, setCurrentWeather, setSearch}: Props) {
+export default function Search({inputVal, setInputVal, setCurrentWeather, setSearch, setPlaceNotFound}: Props) {
 
   //functie care face fetch la api cu numele orasului/tarii
   async function getInfoWeather() {
     const data = await getWeather(inputVal);
+    if(data.cod === "404"){
+      setPlaceNotFound(true);
+      setCurrentWeather(null);
+      return;
+
+    }
+    setPlaceNotFound(false);
+    setSearch(inputVal);
     setCurrentWeather(data);
   }
 
@@ -30,7 +38,7 @@ export default function Search({inputVal, setInputVal, setCurrentWeather, setSea
   // }, [setCurrentWeather, setInputVal]);
 
   return (
-    <form className="flex items-center justify-between gap-2 w-full sm:mt-[-20px] md:mt-0 max-w-xs sm:max-w-md mx-auto bg-white/5 backdrop-blur-md border border-[rgb(41,86,122)] rounded-xl px-3 py-2">
+    <form className="flex items-center justify-between gap-2 w-full sm:-mt-5 md:mt-0 max-w-xs sm:max-w-md mx-auto bg-white/5 backdrop-blur-md border border-[rgb(41,86,122)] rounded-xl px-3 py-2">
       <input
         type="text"
         placeholder="Enter a city..."
@@ -44,9 +52,9 @@ export default function Search({inputVal, setInputVal, setCurrentWeather, setSea
         onClick={(e) => {
           e.preventDefault();
           getInfoWeather();
-          setSearch(inputVal);
+          
         }}
-        className="cursor-pointer bg-gradient-to-br from-[#0f3a34] to-[#02111f] hover:opacity-80 transition-all duration-200 rounded-lg p-2 flex items-center justify-center"
+        className="cursor-pointer bg-linear-to-br from-[#0f3a34] to-[#02111f] hover:opacity-80 transition-all duration-200 rounded-lg p-2 flex items-center justify-center"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

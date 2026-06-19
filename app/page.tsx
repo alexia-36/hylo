@@ -46,6 +46,8 @@ export default function Home() {
 
   const [userul, setUserul] = useState<User | null>(null);
 
+  const [placeNotFound, setPlaceNotFound] = useState(false);
+
 
 
 
@@ -176,19 +178,45 @@ async function removeFavouriteFromSupabase(){
 }
 
 
-
+if (placeNotFound) {
   return (
-    <div className=" flex flex-col items-center justify-center gap-20 ">
+    <div className="flex flex-col items-center justify-center gap-20">
       <Navbar />
       <Search
         inputVal={inputVal}
         setInputVal={setInputVal}
         setCurrentWeather={setCurrentWeather}
         setSearch={setSearch}
+        setPlaceNotFound={setPlaceNotFound}
+      />
+
+      <div className="flex justify-center items-center ">
+        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-8 text-center">
+          <h2 className="text-2xl font-bold text-white">
+            This place can not be found
+          </h2>
+          <p className="mt-2 text-white/70">
+            Try searching for another city or country.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+  return (
+       <div className=" flex flex-col items-center justify-center gap-20 ">
+      <Navbar />
+      <Search
+        inputVal={inputVal}
+        setInputVal={setInputVal}
+        setCurrentWeather={setCurrentWeather}
+        setSearch={setSearch}
+        setPlaceNotFound={setPlaceNotFound}
       />
 
       {/**buttons database section*/}
-      <div className="flex space-x-4 mt-[-40px]">
+      <div className="flex space-x-4 -mt-10">
         {isVisited ? (
             <button onClick={() => removeVisitedFromSupabase()} className="text-black px-5 py-2 ml-5  rounded-xl bg-emerald-500 hover:bg-emerald-400 transition-all cursor-pointer  font-medium">
               Remove from visited
@@ -212,16 +240,16 @@ async function removeFavouriteFromSupabase(){
 
       {/*weather section*/}
       <div className="flex flex-col justify-center items-center mt-5">
-        <h1 className="text-2xl md:text-4xl font-extrabold text-white">The Weather in 
-         <span className="text-2xl md:text-4xl ml-3 font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
-          {search.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
-      
-         </span>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-white">
+          The Weather in 
+          <span className="text-3xl md:text-4xl ml-3 font-extrabold bg-linear-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
+            {search.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
+          </span>
         </h1>
         <WeatherOutlet currentWeather={currentWeather} />
       </div>
 
-         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 md:mt-8 mt-[-5rem]">
+         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 md:-mt-5 -mt-20 mb-10">
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
               <div className="w-full flex justify-center">
                 <Info search={search} />
@@ -238,5 +266,6 @@ async function removeFavouriteFromSupabase(){
           </div>
 
     </div>
+   
   );
 }

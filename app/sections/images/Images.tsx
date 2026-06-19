@@ -77,8 +77,8 @@ export default function Images({ name }: { name: string }) {
 
       <div className="relative z-10">
         {/* Header */}
-        <div className="mb-5 border-b border-white/20 pb-4">
-          <p className="text-xl md:text-3xl ml-3 font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
+        <div className="flex justify-center mb-5 border-b border-white/20 pb-4">
+          <p className="text-3xl  ml-3 font-extrabold bg-linear-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
             Images Gallery
           </p>
         </div>
@@ -97,13 +97,14 @@ export default function Images({ name }: { name: string }) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="eager"
             />
           </div>
 
           {/* Navigation Buttons */}
           <button
             onClick={prevImage}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-200 opacity-0 group-hover:opacity-100 backdrop-blur-sm"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-200 backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
           >
             <svg
               className="w-6 h-6"
@@ -122,7 +123,7 @@ export default function Images({ name }: { name: string }) {
 
           <button
             onClick={nextImage}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-200 opacity-0 group-hover:opacity-100 backdrop-blur-sm"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-200 backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
           >
             <svg
               className="w-6 h-6"

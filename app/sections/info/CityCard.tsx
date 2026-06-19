@@ -33,7 +33,7 @@ export default function CityCard({ data }: Props) {
       <div className="relative z-10">
         {/* Header */}
         <div className="mb-5 border-b border-white/20 pb-4">
-          <p className="text-xl md:text-3xl ml-3 font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
+          <p className="text-xl md:text-2xl ml-3 font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
             City Information
           </p>
         </div>

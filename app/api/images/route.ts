@@ -56,5 +56,6 @@ export async function GET(request: Request) {
     return Response.json(images);
   } catch (error) {
     return Response.json({ error: "Server error" }, { status: 500 });
+    console.error(error);
   }
 }

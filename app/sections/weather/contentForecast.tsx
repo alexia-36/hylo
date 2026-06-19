@@ -1,3 +1,6 @@
+"use client";
+import { useState } from "react";
+
 import ForecastCard from "./ForecastCard";
 
 export type OpenMeteoForecast = {
@@ -17,9 +20,9 @@ export type OpenMeteoForecast = {
   hourly: {
     time: string[];
     temperature_2m: number[];
-    relativehumidity_2m: number[];
-    windspeed_10m: number[];
-    weathercode: number[];
+    relative_humidity_2m: number[];
+    wind_speed_10m: number[];
+    weather_code: number[];
   };
 
   daily_units: {
@@ -62,12 +65,11 @@ function groupByDay(data: OpenMeteoForecast): Record<string, HourData[]> {
     result[date].push({
       time: hour,
       temp: data.hourly.temperature_2m[index],
-      humidity: data.hourly.relativehumidity_2m[index],
-      wind: data.hourly.windspeed_10m[index],
-      weatherCode: data.hourly.weathercode[index],
+      humidity: data.hourly.relative_humidity_2m[index],
+      wind: data.hourly.wind_speed_10m[index],
+      weatherCode: data.hourly.weather_code[index],
     });
   });
-
   return result;
 }
 
@@ -77,6 +79,8 @@ function filterHours(hours: HourData[]): HourData[] {
 }
 
 export default function ContentForecast({ forecast }: Props) {
+  const [openedDay, setOpenedDay] = useState<string | null>(null);
+
   if (!forecast) return <div>loading...</div>;
 
   const grouped = groupByDay(forecast);
@@ -106,6 +110,7 @@ export default function ContentForecast({ forecast }: Props) {
     });
   }; // Output: "June 6"
 
+  //cardurile
   const compEl = nextDays.map((day) => {
     const hours = grouped[day] || [];
 
@@ -124,12 +129,14 @@ export default function ContentForecast({ forecast }: Props) {
         formattedDate={formattedDate}
         mainHour={mainHour}
         hoverHours={hoverHours}
+        isOpen={openedDay === day} //pentru a-l deschide
+        onToggle={() => setOpenedDay((prev) => (prev === day ? null : day))} //pentru a-l inchide
       />
     );
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3  gap-y-6 md:gap-7 ">
+    <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 lg:grid-cols-3  gap-y-6 md:gap-7 ">
       {compEl}
     </div>
   );

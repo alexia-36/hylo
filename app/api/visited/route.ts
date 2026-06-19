@@ -13,6 +13,8 @@ export async function POST(req: Request) {
         name: body.name, //name si imageUrl sunt preluate din corpul requestului care e primit prin parametrul req si stocat in body dupa ce e parsat ca json
         imageUrl: body.imageUrl,
         userId: body.userId,
+        latitude: body.latitude,
+        longitude: body.longitude,
       },
     });
 
@@ -70,6 +72,28 @@ export async function DELETE(req: Request) {
   } catch {
     return NextResponse.json(
       { err: "Failed to delete visited places" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const { id, rating } = await req.json();
+
+    await prisma.visited.update({
+      where: {
+        id,
+      },
+      data: {
+        rating,
+      },
+    });
+
+    return new NextResponse(null, { status: 200 });
+  } catch {
+    return NextResponse.json(
+      { err: "Failed to update rating" },
       { status: 500 },
     );
   }

@@ -17,18 +17,25 @@ export default function WeatherOutlet({ currentWeather }: Props) {
   const [isLoadingForecast, setIsLoadingForecast] = useState(false);
 
   useEffect(() => {
-    const lat = currentWeather?.coord.lat;
-    const long = currentWeather?.coord.lon;
+    try {
+      const lat = currentWeather?.coord.lat;
+      const lon = currentWeather?.coord.lon;
 
-    if (lat === undefined || long === undefined) return;
+      if (lat === undefined || lon === undefined) return;
 
-    async function getForecastData() {
-      setIsLoadingForecast(true);
-      const data = await getForecast(lat!, long!);
-      setForecast(data);
-      setIsLoadingForecast(false);
+      async function getForecastData() {
+        setIsLoadingForecast(true);
+        const data = await getForecast(lat!, lon!);
+        setForecast(data);
+
+        // console.log("DATA FROM API =", data);
+
+        setIsLoadingForecast(false);
+      }
+      getForecastData();
+    } catch (err) {
+      console.log(err);
     }
-    getForecastData();
   }, [currentWeather]);
 
   // Loading complet - când nu avem currentWeather deloc

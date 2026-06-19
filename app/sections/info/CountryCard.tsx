@@ -51,7 +51,7 @@ export default function CountryCard({ data }: Props) {
           />
 
           <div>
-            <p className="text-xl md:text-3xl ml-3 font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
+            <p className="text-3xl  ml-3 font-extrabold bg-linear-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent animate-gradient">
               Country Information
             </p>
           </div>

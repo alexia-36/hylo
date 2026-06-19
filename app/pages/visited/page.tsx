@@ -1,9 +1,8 @@
 "use client";
-
+import { useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 import Navbar from "../../components/Navbar";
 
@@ -11,10 +10,15 @@ import removeVisited from "../../databaseFunctions/visited/removeVisited";
 import removeAllVisited from "../../databaseFunctions/visited/removeAllVisited";
 import getVisited from "../../databaseFunctions/visited/geVisited";
 
+import VisitedPlaceCard from "./components/VisitedPlaceCard";
+
+import updateVisitedRating from "../../databaseFunctions/visited/updateVisitedRating";
+
 type VisitedPlace = {
   id: string;
   name: string;
   imageUrl: string;
+  rating: number | null;
 };
 
 export default function Visited() {
@@ -23,7 +27,8 @@ export default function Visited() {
 
   const router = useRouter();
 
-  async function checkAuth() {
+  const checkAuth = useCallback(async () => {
+    //vezi explicatia in josul paginii /favourite
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -32,9 +37,14 @@ export default function Visited() {
       router.push("/login");
       return null;
     }
-    return user;
-  }
 
+    return user;
+  }, [router]);
+
+  //functie care trimite utilizatorul in pagina home dupa ce apasa pe o tara/oras
+  function handleViewDetails(placeName: string) {
+    router.push(`/?city=${encodeURIComponent(placeName)}`);
+  }
   //asta initializeaza state-ul visited din baza de date cu locurile vizitate atunci cand intru pe pagina
   useEffect(() => {
     async function getVisitedPlaces() {
@@ -52,12 +62,7 @@ export default function Visited() {
     }
 
     getVisitedPlaces();
-  }, []);
-
-  //functie care trimite utilizatorul in pagina home dupa ce apasa pe o tara/oras
-  function handleViewDetails(placeName: string) {
-    router.push(`/?city=${encodeURIComponent(placeName)}`);
-  }
+  }, [checkAuth]);
 
   //functie care sterge toate orasele de la visited
   async function handleDeleteAll() {
@@ -84,6 +89,16 @@ export default function Visited() {
     setVisited((prevFav) => prevFav.filter((place) => place.id !== id));
   }
 
+  async function handleRatingChange(id: string, rating: number) {
+    setVisited((prev) =>
+      prev.map((place) => (place.id === id ? { ...place, rating } : place)),
+    );
+    await updateVisitedRating({
+      id,
+      rating,
+    });
+  }
+
   if (isLoading) {
     return (
       <div
@@ -102,70 +117,19 @@ export default function Visited() {
 
   const placesEl = visited.map((place) => {
     return (
-      <div
+      <VisitedPlaceCard
         key={place.id}
-        className="group bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-emerald-500/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-emerald-500/20"
-      >
-        <div className="relative h-56 w-full overflow-hidden">
-          <Image
-            src={place.imageUrl}
-            alt={place.name}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-
-          {/* gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-
-          {/* delete button - appears on hover */}
-          <button
-            onClick={() => handleDeleteOne(place.id, place.name)}
-            className="absolute top-4 left-4 cursor-pointer bg-red-500/90 hover:bg-red-600 backdrop-blur-sm text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105"
-            aria-label="Remove from visited"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-
-          {/* city name overlay */}
-          <div className="absolute bottom-4 left-4">
-            <h2 className="text-2xl font-bold text-white drop-shadow-lg">
-              {place.name}
-            </h2>
-          </div>
-        </div>
-
-        <div className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-white/60 text-sm">Already visited destination</p>
-          </div>
-
-          <button
-            onClick={() => handleViewDetails(place.name)}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-medium transition-all cursor-pointer shadow-lg hover:shadow-xl"
-          >
-            View Details →
-          </button>
-        </div>
-      </div>
+        place={place}
+        handleViewDetails={handleViewDetails}
+        handleDeleteOne={handleDeleteOne}
+        handleRatingChange={handleRatingChange}
+      />
     );
   });
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen   pb-12"
       style={{
         background:
           "linear-gradient(135deg, #0f172a 0%, #0a1a1a 50%, #0a1f1a 100%)",
@@ -174,9 +138,10 @@ export default function Visited() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        {/*header*/}
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-3 mb-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-emerald-400 via-teal-400 to-green-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-emerald-400 via-teal-400 to-green-500 bg-clip-text text-transparent">
               Visited Places
             </h1>
           </div>
@@ -206,6 +171,7 @@ export default function Visited() {
           )}
         </div>
 
+        {/*cards */}
         {visited.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {placesEl}
@@ -222,7 +188,7 @@ export default function Visited() {
 
             <button
               onClick={() => router.push("/")}
-              className="mt-8 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 transition-all cursor-pointer text-white font-medium"
+              className="mt-8 px-6 py-2.5 rounded-xl bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 transition-all cursor-pointer text-white font-medium"
             >
               Explore Places →
             </button>

@@ -1,4 +1,23 @@
 //pt sectiunea de info, aici fac cerere la doua api-uri diferite, unul pentru tara si unul pentru oras, in functie de ce returneaza primul api (daca returneaza 404 inseamna ca nu a gasit o tara cu numele respectiv si atunci fac cerere la api-ul de oras)
+
+type Country = {
+  names: {
+    common: string;
+  };
+  region: string;
+  subregion?: string;
+  population: number;
+  capitals?: { name: string }[];
+  date?: {
+    start_of_week?: string;
+  };
+  currencies?: { code: string }[];
+  languages?: { name: string }[];
+  flag?: {
+    url_png?: string;
+  };
+};
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -10,26 +29,48 @@ export async function GET(req: Request) {
 
     // pt tara
     const countryRes = await fetch(
-      `https://restcountries.com/v3.1/name/${encodeURIComponent(location)}?fullText=true`,
+      `https://api.restcountries.com/countries/v5?q=${encodeURIComponent(location)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.RESTCOUNTRIES_API_KEY}`,
+        },
+      },
     );
 
-    if (countryRes.ok) {
-      const data = await countryRes.json();
-      const c = data[0];
+    const dataCountries = await countryRes.json();
+    const countries = dataCountries.data?.objects ?? [];
+
+    if (countryRes.ok && countries.length > 0) {
+      const c =
+        countries.find(
+          (country: Country) =>
+            country.names.common.toLowerCase() === location.toLowerCase(),
+        ) || countries[0];
 
       return Response.json({
         type: "country",
         data: {
-          name: c.name.common,
-          independent: c.independent,
+          name: c.names.common,
           region: c.region,
           subregion: c.subregion,
           population: c.population,
-          capital: c.capital,
-          startOfTheWeek: c.startOfWeek,
-          currencies: Object.keys(c.currencies || {}).join(", "),
-          languages: Object.values(c.languages || {}).join(", "),
-          flag: c.flags.png,
+
+          capital:
+            c.capitals?.map((capital: { name: string }) => capital.name) || [],
+
+          startOfTheWeek: c.date?.start_of_week || "",
+
+          currencies:
+            c.currencies
+              ?.map((currency: { code: string }) => currency.code)
+              .join(", ") || "",
+
+          languages:
+            c.languages
+              ?.map((language: { name: string }) => language.name)
+              .join(", ") || "",
+
+          flag: c.flag?.url_png || "",
         },
       });
     }

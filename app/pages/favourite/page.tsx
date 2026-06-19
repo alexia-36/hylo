@@ -1,9 +1,9 @@
 "use client";
 
+import { useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 import Navbar from "../../components/Navbar";
 
@@ -12,10 +12,14 @@ import removeAllFavourite from "../../databaseFunctions/favourite/removeAllFavou
 
 import getFavourite from "../../databaseFunctions/favourite/getFavourite";
 
+import FavPlaceCard from "./components/FavPlaceCard";
+
 type FavPlace = {
   id: string;
   name: string;
   imageUrl: string;
+  note: string;
+  updatedAt: Date;
 };
 
 export default function Favourite() {
@@ -24,7 +28,8 @@ export default function Favourite() {
 
   const router = useRouter();
 
-  async function checkAuth() {
+  const checkAuth = useCallback(async () => {
+    //vezi explicatia in josul paginii
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -33,14 +38,16 @@ export default function Favourite() {
       router.push("/login");
       return null;
     }
+
     return user;
-  }
+  }, [router]);
 
   //asta initializeaza state-ul fav din baza de date cu locurile care au fost adaugate la favourite atunci cand intru pe pagina
   useEffect(() => {
     async function getFavouritePlaces() {
+      //verific daca userul e autentificat (e acelasi cod la in checkUser, dar )
       const user = await checkAuth();
-      if (!user) return;
+      if (!user) return null;
 
       try {
         const places = await getFavourite(user.id);
@@ -53,7 +60,7 @@ export default function Favourite() {
     }
 
     getFavouritePlaces();
-  }, []);
+  }, [checkAuth]);
 
   //functie care trimite utilizatorul in pagina home dupa ce apasa pe o tara/oras
   function handleViewDetails(placeName: string) {
@@ -101,75 +108,21 @@ export default function Favourite() {
     );
   }
 
+  //aceste place contin fiecare obiectul cu tot cu note, de aia nu trebuie sa creez functie separata pt getNote
   const favEl = fav.map((place) => {
     return (
-      /*asta e div-ul pentru fiecare loc in parte*/
-      <div
+      <FavPlaceCard
         key={place.id}
-        className="group bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-amber-500/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/20"
-      >
-        <div className="relative h-56 w-full overflow-hidden">
-          <Image
-            src={place.imageUrl}
-            alt={place.name}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-
-          {/* overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-
-          {/* city name overlay */}
-          <div className="absolute bottom-4 left-4">
-            <h2 className="text-2xl font-bold text-white drop-shadow-lg">
-              {place.name}
-            </h2>
-          </div>
-
-          {/* remove button - appears on hover */}
-          <button
-            onClick={() => handleDeleteOne(place.id, place.name)}
-            className="absolute top-4 left-4 bg-red-500/90 cursor-pointer hover:bg-red-600 backdrop-blur-sm text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105"
-            aria-label="Remove from favourites"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-white/60 text-sm">
-              One of your favourite destinations
-            </p>
-          </div>
-
-          <button
-            onClick={() => handleViewDetails(place.name)}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-sm font-medium transition-all cursor-pointer shadow-lg hover:shadow-xl"
-          >
-            Explore
-          </button>
-        </div>
-      </div>
+        place={place}
+        handleViewDetails={handleViewDetails}
+        handleDeleteOne={handleDeleteOne}
+      />
     );
   });
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen pb-10"
       style={{
         background:
           "linear-gradient(135deg, #0f172a 0%, #1a1a1a 50%, #1e1a0f 100%)",
@@ -181,7 +134,7 @@ export default function Favourite() {
         {/* header */}
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-3 mb-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-amber-400 via-orange-400 to-yellow-500 bg-clip-text text-transparent">
               Favourite Places
             </h1>
           </div>
@@ -227,7 +180,7 @@ export default function Favourite() {
 
             <button
               onClick={() => router.push("/")}
-              className="mt-8 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all cursor-pointer text-white font-medium"
+              className="mt-8 px-6 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all cursor-pointer text-white font-medium"
             >
               Explore Places →
             </button>
@@ -237,3 +190,33 @@ export default function Favourite() {
     </div>
   );
 }
+
+//deci explicatia cu callback
+//situatia fara callback
+// useEffect-ul se randeaza o singura data la inceput
+// doar ca nextjs vede ca in useEffect eu apelez functia checkAuth deci depinde de ea(fapt pentru care am adaugat-o la dependente)
+// chestia e ca checkAuth se INREGISTREAZA, nu se apeleaza la fiecare render a componentei, dar se inregistreaza diferit la fiecare render
+// // render cauzat de actualizarea unui state de ex
+// checkAuth se schimba între render-uri desi are acelasi date:
+// Render 1 -> checkAuth = funcția #1
+// Render 2 -> checkAuth = funcția #2
+// Render 3 -> checkAuth = funcția #3
+// deci faptul ca functia checkAuth se inregistreaza diferit la fiecare render il determina pe useEffect sa se execute si el de fiecare data, pt ca vede ca functia checkAuth e alta, desi e tot aia
+//deci desi eu vreau ca useEffect sa ruleze o singura data la inceput, faptul ca functia checkAuth se inregistreaza diferit la fiecare randare a componentei determina ca si useEffect sa se randeze la fiecare randare a componentei lucru pe care nu il vreau
+//pentru asta exista useCallback
+
+// face useCallback?
+// useCallback îi spune lui React:
+// "Păstrează aceeași funcție între render-uri, cât timp dependențele nu se schimbă."
+// Render 1 -> checkAuth = funcția #1
+// Render 2 -> checkAuth = funcția #1
+// Render 3 -> checkAuth = funcția #1
+
+// Deci React compară:
+//vechi: checkAuth -> funcția #1
+// nou:   checkAuth -> funcția #1
+//și vede că nu s-a schimbat, așa că useEffect nu rulează din nou.
+
+// fără useCallback, efectul s-ar executa din nou după fiecare setFav sau alt re-render, deoarece checkAuth este recreată la fiecare render.
+// De aceea next spune:
+// „Ori include checkAuth în dependențe, ori fă-o stabilă (de exemplu cu useCallback) sau mut-o în afara componentei.”

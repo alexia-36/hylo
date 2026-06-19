@@ -11,7 +11,16 @@ export default async function addVisited({
   userId: string;
 }) {
   try {
-    const res = await fetch("/api/visited", {
+    //asta preia latitudinea si longitudinea locului pe care il adaug la visit
+    //fac asta pt ca vreau sa plasez un marker pe harta in locul respectiv
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=json&limit=1`,
+    );
+    const data = await res.json();
+    const lat = Number(data[0].lat);
+    const lon = Number(data[0].lon);
+
+    await fetch("/api/visited", {
       //aici puteam sa am const response = cu ala, dar nu vreau sa transmit nimic inapoi
       method: "POST",
       headers: {
@@ -21,6 +30,8 @@ export default async function addVisited({
         name: name,
         imageUrl: imageUrl,
         userId: userId,
+        latitude: lat,
+        longitude: lon,
       }),
     });
 
