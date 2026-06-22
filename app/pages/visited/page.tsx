@@ -1,4 +1,6 @@
 "use client";
+
+import { Suspense } from "react";
 import { useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect } from "react";
