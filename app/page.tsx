@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { User } from "@supabase/supabase-js"; //importam tipul User pentru a putea specifica tipul variabilei userul care tine informatii despre userul logat
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -31,7 +32,10 @@ const Map = dynamic(() => import("./sections/map/Map"), {
 });
 
 //prettier-ignore
-export default function Home() {
+
+function HomeContent() {
+  const searchParams = useSearchParams();
+
   const [inputVal, setInputVal] = useState("");
   const [currentWeather, setCurrentWeather] = useState<WeatherType | null>(null); 
 
@@ -40,14 +44,12 @@ export default function Home() {
   const [isVisited, setIsVisited] = useState(false);  //asta e pt a sti ce stare sa ii dau butonului fie addVisited fie removeFromVisited, fac asta pentru a putea adauga la visited si a sterge de la visited si din pagina orasului/tarii nu doar din pagina visited
   const [isFavourite, setIsFavourite] = useState(false); //asta e pt a sti ce stare sa ii dau butonului de addFavourite, fac asta pentru a putea adauga la favourite si din pagina orasului/tarii nu doar din pagina favourite
 
-  const searchParams = useSearchParams(); //aici stochez numele locului(daca exista) primit prin URL de la visited sau favorite
 
   const router = useRouter(); //il folosim pentru a face redirect catre pagina de register/login daca utilizatorul nu e logat
 
   const [userul, setUserul] = useState<User | null>(null);
 
   const [placeNotFound, setPlaceNotFound] = useState(false);
-
 
 
 
@@ -269,3 +271,13 @@ if (placeNotFound) {
    
   );
 }
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+//acest suspense afiseaza un fallback/loading pana cand afla valoarea lui search params
